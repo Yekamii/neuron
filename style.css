@@ -1,0 +1,891 @@
+/* =====================================================
+   ნეირონის სტრუქტურის მინი თამაში
+===================================================== */
+
+
+/* =====================================================
+   ძირითადი
+===================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+    margin: 0;
+
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(57, 217, 255, 0.08),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at bottom right,
+            rgba(139, 124, 255, 0.08),
+            transparent 30%
+        ),
+        #0a0d1a;
+
+    color: #f1f1ed;
+
+    font-family:
+        Inter,
+        Arial,
+        sans-serif;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.game-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 30px;
+
+    padding: 28px 40px;
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.08);
+}
+
+
+.eyebrow {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #39d9ff;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
+}
+
+
+.game-header h1 {
+    margin: 0;
+
+    font-size: 32px;
+
+    font-weight: 800;
+}
+
+
+.game-header p {
+    margin: 7px 0 0;
+
+    color: #8e96a3;
+
+    font-size: 14px;
+}
+
+
+.progress-box {
+    min-width: 110px;
+
+    padding: 12px 18px;
+
+    text-align: center;
+
+    border:
+        1px solid rgba(57, 217, 255, 0.2);
+
+    border-radius: 12px;
+
+    background:
+        rgba(57, 217, 255, 0.05);
+}
+
+
+.progress-box span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #7e8794;
+
+    font-size: 11px;
+}
+
+
+.progress-box strong {
+    color: #39d9ff;
+
+    font-size: 20px;
+}
+
+
+/* =====================================================
+   მთავარი განლაგება
+===================================================== */
+
+.game-layout {
+    display: grid;
+
+    grid-template-columns:
+        minmax(500px, 1.7fr)
+        minmax(320px, 0.9fr);
+
+    gap: 28px;
+
+    padding: 28px 40px;
+}
+
+
+.neuron-panel,
+.cards-panel {
+    min-width: 0;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 18px;
+
+    background:
+        rgba(255, 255, 255, 0.025);
+}
+
+
+.neuron-panel {
+    overflow: hidden;
+}
+
+
+.panel-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 20px 22px;
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.07);
+}
+
+
+.panel-title span {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 30px;
+
+    height: 30px;
+
+    border-radius: 8px;
+
+    background:
+        rgba(57, 217, 255, 0.1);
+
+    color: #39d9ff;
+
+    font-size: 12px;
+
+    font-weight: 800;
+}
+
+
+.panel-title h2 {
+    margin: 0;
+
+    font-size: 17px;
+}
+
+
+/* =====================================================
+   NEURON BOARD
+===================================================== */
+
+.neuron-board {
+    position: relative;
+
+    width: 100%;
+
+    min-height: 650px;
+
+    padding: 5px;
+
+    overflow: hidden;
+}
+
+
+.neuron-svg {
+    display: block;
+
+    width: 100%;
+
+    height: auto;
+
+    min-height: 650px;
+}
+
+
+/* =====================================================
+   დენდრიტები
+===================================================== */
+
+.dendrites path {
+    fill: none;
+
+    stroke: #aeb4bb;
+
+    stroke-width: 12;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
+
+    opacity: 0.95;
+}
+
+
+/* =====================================================
+   სომა
+===================================================== */
+
+.soma {
+    fill: #414952;
+
+    stroke: #b9c0c7;
+
+    stroke-width: 4;
+}
+
+
+.nucleus {
+    fill: #7f8790;
+
+    stroke: #c9ced3;
+
+    stroke-width: 3;
+}
+
+
+/* =====================================================
+   აქსონი
+===================================================== */
+
+.axon {
+    fill: none;
+
+    stroke: #b6bbc1;
+
+    stroke-width: 42;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
+}
+
+
+/* =====================================================
+   მიელინის ქვეშ არსებული ნაცრისფერი ნაწილი
+===================================================== */
+
+.myelin-base {
+    fill: none;
+
+    stroke: #b6bbc1;
+
+    stroke-width: 34;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
+}
+
+
+/* =====================================================
+   მიელინის გარსები
+===================================================== */
+
+.myelin rect {
+    fill: #8f694f;
+
+    stroke: #8f694f;
+
+    stroke-width: 8;
+
+    filter:
+        drop-shadow(
+            0 2px 2px rgba(0, 0, 0, 0.25)
+        );
+}
+
+
+/* =====================================================
+   აქსონის დაბოლოებები
+===================================================== */
+
+.axon-endings path {
+    fill: none;
+
+    stroke: #b6bbc1;
+
+    stroke-width: 13;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
+}
+
+
+/* =====================================================
+   ისრები
+===================================================== */
+
+.arrow-line {
+    stroke: #8c9299;
+
+    stroke-width: 3;
+
+    stroke-linecap: round;
+
+    fill: none;
+
+    opacity: 0.95;
+}
+
+
+.arrow-line:hover {
+    stroke: #39d9ff;
+}
+
+
+/* =====================================================
+   DROP ZONE
+===================================================== */
+
+.drop-zone {
+    fill:
+        rgba(255, 255, 255, 0.035);
+
+    stroke:
+        rgba(255, 255, 255, 0.25);
+
+    stroke-width: 2;
+
+    stroke-dasharray: 6 5;
+
+    transition:
+        fill 0.2s ease,
+        stroke 0.2s ease;
+}
+
+
+.drop-zone:hover {
+    fill:
+        rgba(57, 217, 255, 0.08);
+
+    stroke:
+        rgba(57, 217, 255, 0.6);
+}
+
+
+.drop-zone.hover {
+    fill:
+        rgba(57, 217, 255, 0.14);
+
+    stroke:
+        #39d9ff;
+
+    stroke-width: 3;
+}
+
+
+/* =====================================================
+   I ეტაპის სწორი პასუხი
+===================================================== */
+
+.drop-zone.correct {
+    fill:
+        rgba(73, 230, 161, 0.12);
+
+    stroke:
+        #49e6a1;
+
+    stroke-width: 3;
+
+    stroke-dasharray: none;
+}
+
+
+/* =====================================================
+   II ეტაპის სწორი ფუნქცია
+===================================================== */
+
+.drop-zone.function-correct {
+    fill:
+        rgba(73, 230, 161, 0.18);
+
+    stroke:
+        #49e6a1;
+
+    stroke-width: 4;
+
+    stroke-dasharray: none;
+
+    filter:
+        drop-shadow(
+            0 0 8px rgba(73, 230, 161, 0.25)
+        );
+}
+
+
+/* =====================================================
+   SVG წარწერა
+===================================================== */
+
+.filled-label {
+    pointer-events: none;
+
+    font-family:
+        Inter,
+        Arial,
+        sans-serif;
+}
+
+
+/* =====================================================
+   CARDS PANEL
+===================================================== */
+
+.cards-panel {
+    position: relative;
+
+    padding: 24px;
+
+    display: flex;
+
+    flex-direction: column;
+}
+
+
+.cards-header {
+    margin-bottom: 20px;
+}
+
+
+.phase-number {
+    display: inline-block;
+
+    margin-bottom: 8px;
+
+    color: #8b7cff;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+
+    text-transform: uppercase;
+}
+
+
+.cards-header h2 {
+    margin: 0;
+
+    font-size: 22px;
+}
+
+
+.cards-header p {
+    margin: 8px 0 0;
+
+    color: #8e96a3;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+/* =====================================================
+   ბარათების კონტეინერი
+===================================================== */
+
+.cards-container {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+    flex: 1;
+}
+
+
+/* =====================================================
+   DRAG CARD
+===================================================== */
+
+.drag-card {
+    position: relative;
+
+    padding: 15px 16px;
+
+    min-height: 52px;
+
+    display: flex;
+
+    align-items: center;
+
+    border:
+        1px solid rgba(57, 217, 255, 0.18);
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(57, 217, 255, 0.07),
+            rgba(139, 124, 255, 0.07)
+        );
+
+    color: #f1f1ed;
+
+    font-size: 14px;
+
+    font-weight: 650;
+
+    line-height: 1.4;
+
+    cursor: grab;
+
+    user-select: none;
+
+    touch-action: none;
+
+    transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        background 0.15s ease,
+        opacity 0.2s ease;
+}
+
+
+.drag-card:hover {
+    transform: translateY(-2px);
+
+    border-color:
+        rgba(57, 217, 255, 0.55);
+}
+
+
+.drag-card:active {
+    cursor: grabbing;
+}
+
+
+.drag-card.dragging {
+    position: fixed;
+
+    z-index: 1000;
+
+    cursor: grabbing;
+
+    transform:
+        scale(1.03);
+
+    box-shadow:
+        0 18px 45px
+        rgba(0, 0, 0, 0.45);
+
+    border-color:
+        #39d9ff;
+
+    background:
+        #151b2a;
+}
+
+
+/* =====================================================
+   ფუნქციის ბარათები
+===================================================== */
+
+.function-card {
+    font-size: 13px;
+
+    font-weight: 500;
+
+    line-height: 1.5;
+
+    min-height: 76px;
+}
+
+
+/* =====================================================
+   სწორი ბარათი
+===================================================== */
+
+.drag-card.correct-card {
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   არასწორი ბარათი
+===================================================== */
+
+.drag-card.wrong-card {
+    border-color:
+        #ff5c70;
+
+    background:
+        rgba(255, 92, 112, 0.1);
+
+    animation:
+        shake 0.25s ease;
+}
+
+
+@keyframes shake {
+
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-7px);
+    }
+
+    50% {
+        transform: translateX(7px);
+    }
+
+    75% {
+        transform: translateX(-5px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+
+/* =====================================================
+   დასრულების ბლოკი
+===================================================== */
+
+.finish-box {
+    display: none;
+
+    margin-top: 20px;
+
+    padding: 22px;
+
+    text-align: center;
+
+    border:
+        1px solid rgba(73, 230, 161, 0.25);
+
+    border-radius: 14px;
+
+    background:
+        rgba(73, 230, 161, 0.06);
+}
+
+
+.finish-box.show {
+    display: block;
+}
+
+
+.finish-icon {
+    width: 46px;
+
+    height: 46px;
+
+    margin: 0 auto 10px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        rgba(73, 230, 161, 0.14);
+
+    color: #49e6a1;
+
+    font-size: 24px;
+
+    font-weight: 800;
+}
+
+
+.finish-box h3 {
+    margin: 0 0 7px;
+
+    font-size: 20px;
+}
+
+
+.finish-box p {
+    margin: 0 0 16px;
+
+    color: #9aa2ad;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+/* =====================================================
+   RESTART BUTTON
+===================================================== */
+
+.restart-button {
+    padding: 10px 16px;
+
+    border:
+        1px solid rgba(57, 217, 255, 0.3);
+
+    border-radius: 9px;
+
+    background:
+        rgba(57, 217, 255, 0.08);
+
+    color: #39d9ff;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.restart-button:hover {
+    background:
+        rgba(57, 217, 255, 0.16);
+
+    border-color:
+        #39d9ff;
+}
+
+
+/* =====================================================
+   შეტყობინება
+===================================================== */
+
+.message {
+    position: fixed;
+
+    left: 50%;
+
+    bottom: 28px;
+
+    z-index: 2000;
+
+    transform:
+        translate(-50%, 20px);
+
+    padding: 12px 20px;
+
+    border:
+        1px solid rgba(255, 92, 112, 0.3);
+
+    border-radius: 10px;
+
+    background:
+        #171b27;
+
+    color: #ff8a99;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.message.show {
+    opacity: 1;
+
+    transform:
+        translate(-50%, 0);
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 1050px) {
+
+    .game-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .cards-panel {
+        min-height: 500px;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .game-header {
+        padding: 20px;
+
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+
+    .game-layout {
+        padding: 20px;
+
+        gap: 20px;
+    }
+
+
+    .neuron-board {
+        min-height: 560px;
+    }
+
+
+    .neuron-svg {
+        min-height: 560px;
+    }
+
+}
